@@ -13,6 +13,7 @@ import { useOAuthConnect } from '@/hooks/use-oauth-connect';
 import { useOAuthProviders } from '@/hooks/api/use-oauth-providers';
 import { useMemo } from 'react';
 import { API_CONFIG } from '@/lib/api/config';
+import botthmsLogo from '@/botthms-plus.svg';
 
 export const Route = createFileRoute('/users/$userId/pair/')({
   component: PairWearablePage,
@@ -59,9 +60,9 @@ function PairWearablePage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-200 flex flex-col items-center justify-center p-6 relative overflow-hidden selection:bg-white/20">
+    <div className="min-h-screen bg-[#06090d] text-zinc-200 flex flex-col items-center justify-center p-6 relative overflow-hidden selection:bg-white/20">
       {/* Ambient Background Effect */}
-      <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.1),rgba(255,255,255,0))] pointer-events-none" />
+      <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_80%_60%_at_50%_-20%,rgba(143,211,255,0.14),rgba(255,255,255,0))] pointer-events-none" />
 
       {/* Header */}
       <motion.div
@@ -70,10 +71,16 @@ function PairWearablePage() {
         transition={{ duration: 0.4 }}
         className="relative z-10 text-center mb-14 space-y-3"
       >
+        <img src={botthmsLogo} alt="botthms+" className="h-10 w-auto mx-auto mb-6" />
         <h1 className="text-4xl font-medium text-white tracking-tight">
-          Connect a device
+          Wear what you already wear.
         </h1>
-        <p className="text-lg text-zinc-400">Select your wearable platform</p>
+        <p className="text-lg text-zinc-400">
+          Connect it once. We read the signals; you keep the watch you like.
+        </p>
+        <p className="text-sm text-zinc-500">
+          Device data explains your score &mdash; it never changes it.
+        </p>
       </motion.div>
 
       {/* Error notification */}
