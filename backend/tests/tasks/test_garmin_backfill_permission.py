@@ -92,3 +92,24 @@ class TestBackfillPermissionCheck:
             result = start_full_backfill(str(uuid4()))
 
         assert result["status"] == "started"
+
+    @patch(f"{MODULE}.UserConnectionRepository")
+    @pytest.mark.usefixtures("_patch_redis", "_patch_session")
+    def test_proceeds_when_scope_is_only_oauth_token_scope(self, mock_repo_cls: MagicMock) -> None:
+        """Permissions fetch failed and the OAuth token scope was stored instead — still unknown, proceed."""
+        mock_repo_cls.return_value.get_by_user_and_provider.return_value = _make_connection(
+            "PARTNER_WRITE PARTNER_READ CONNECT_READ CONNECT_WRITE"
+        )
+
+        with (
+            patch(f"{MODULE}.acquire_backfill_lock", return_value=True),
+            patch(f"{MODULE}.set_trace_id", return_value="trace-123"),
+            patch(f"{MODULE}.get_current_window", return_value=0),
+            patch(f"{MODULE}.init_window_state"),
+            patch(f"{MODULE}.reset_type_status"),
+            patch(f"{MODULE}.trigger_backfill_for_type") as mock_trigger,
+        ):
+            mock_trigger.apply_async = MagicMock()
+            result = start_full_backfill(str(uuid4()))
+
+        assert result["status"] == "started"

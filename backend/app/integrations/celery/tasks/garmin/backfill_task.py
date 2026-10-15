@@ -145,7 +145,12 @@ def start_full_backfill(user_id: str) -> dict[str, Any]:
                 user_id=user_id,
             )
             return {"status": "skipped", "reason": "No Garmin connection found"}
-        if connection.scope is not None and "HISTORICAL_DATA_EXPORT" not in connection.scope.split():
+        # Only Garmin data permissions (ACTIVITY_EXPORT, HEALTH_EXPORT, ...) tell us anything.
+        # When the permissions fetch fails, the stored scope falls back to the OAuth token scope
+        # ("PARTNER_READ CONNECT_READ ..."), which holds no data permissions — that is still unknown.
+        granted = set(connection.scope.split()) if connection.scope else set()
+        permissions_known = any(p.endswith("_EXPORT") or p.endswith("_IMPORT") for p in granted)
+        if permissions_known and "HISTORICAL_DATA_EXPORT" not in granted:
             log_structured(
                 logger,
                 "info",
